@@ -14,6 +14,11 @@ const createStudent = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: 'somethings is wrong',
+      error,
+    });
   }
 };
 
@@ -28,6 +33,11 @@ const getAllStudents = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: 'somethings is wrong',
+      error,
+    });
   }
 };
 
@@ -43,6 +53,11 @@ const getSingleStudents = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: 'somethings is wrong',
+      error,
+    });
   }
 };
 

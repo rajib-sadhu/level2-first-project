@@ -1,4 +1,4 @@
-export type Guardian = {
+export type TGuardian = {
   fatherName: string;
   fatherOccupation: string;
   fatherContactNo: string;
@@ -7,22 +7,23 @@ export type Guardian = {
   motherContactNo: string;
 };
 
-export type UserName = {
+export type TUserName = {
   firstName: string;
   middleName?: string | undefined;
-  lastName: String;
+  lastName: string;
 };
 
-export type LocalGuardian = {
+export type TLocalGuardian = {
   name: string;
   occupation: string;
   contactNo: string;
   address: string;
 };
 
-export type Student = {
+export type TStudent = {
   id: string;
-  name: UserName;
+  password: string;
+  name: TUserName;
   gender: 'male' | 'female' | 'other';
   dateOfBirth?: string; // Make it optional
   contactNo: string;
@@ -30,9 +31,10 @@ export type Student = {
   bloodGroup?: 'A+' | 'B+' | 'O+' | 'AB+' | 'A-' | 'B-' | 'O-' | 'AB-';
   presentAddress: string;
   permanentAddress: string;
-  guardian: Guardian;
-  localGuardian: LocalGuardian;
+  guardian: TGuardian;
+  localGuardian: TLocalGuardian;
   email: string;
   profileImg?: string;
   isActive: 'active' | 'blocked';
+  isDeleted?: boolean;
 };

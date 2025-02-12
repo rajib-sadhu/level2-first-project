@@ -4,11 +4,10 @@ import app from './app';
 
 async function main() {
   try {
-    const test = await mongoose.connect(config.database_url as string, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    // Connect to MongoDB without deprecated options
+    await mongoose.connect(config.database_url as string);
 
+    // Start the server
     app.listen(config.port, () => {
       console.log(`First project app listening on port ${config.port}`);
     });

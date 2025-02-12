@@ -1,39 +1,42 @@
 import { Request, Response } from 'express';
 import { StudentServices } from './student.service';
 import studentValidationSchema from './student.validation';
+import { ZodError } from 'zod';
 
 const createStudent = async (req: Request, res: Response) => {
   try {
     const { student: studentData } = req.body;
 
-    // creating a schema validation using joi
-    // const { error, value } = studentValidationSchema.validate(studentData);
-
-    // creating a schema validation using zod
+    // Validate the student data using Zod
     const zodParseData = studentValidationSchema.parse(studentData);
 
-    // if (error) {
-    //   return res.status(500).json({
-    //     success: false,
-    //     message: 'Something is wrong',
-    //     error: error.details,
-    //   });
-    // }
-
+    // Create the student in the database
     const result = await StudentServices.createStudentIntoDB(zodParseData);
 
-    return res.status(200).json({
+    // Send success response
+    res.status(200).json({
       success: true,
-      message: 'Student is created successfully',
+      message: 'Student created successfully',
       data: result,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(200).json({
-      success: false,
-      message: 'somethings is wrong',
-      error,
-    });
+    console.error(error);
+
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        error: error.errors,
+      });
+    } else {
+      // Handle other errors
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
   }
 };
 
@@ -41,17 +44,18 @@ const getAllStudents = async (req: Request, res: Response) => {
   try {
     const result = await StudentServices.getAllStudentsFromDB();
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      message: 'Students is retrieved successfully',
+      message: 'Students retrieved successfully',
       data: result,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(200).json({
+    console.error(error);
+
+    res.status(500).json({
       success: false,
-      message: 'somethings is wrong',
-      error,
+      message: 'Something went wrong',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -61,17 +65,39 @@ const getSingleStudents = async (req: Request, res: Response) => {
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(studentId);
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      message: 'A Student is retrieved successfully',
+      message: 'Student retrieved successfully',
       data: result,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(200).json({
+    console.error(error);
+
+    res.status(500).json({
       success: false,
-      message: 'somethings is wrong',
-      error,
+      message: 'Something went wrong',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
+const deleteStudent = async (req: Request, res: Response) => {
+  try {
+    const { studentId } = req.params;
+    const result = await StudentServices.deleteStudentFromDB(studentId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Student deleted successfully',
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong',
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -80,4 +106,5 @@ export const StudentControllers = {
   createStudent,
   getAllStudents,
   getSingleStudents,
+  deleteStudent,
 };
